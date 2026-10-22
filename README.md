@@ -173,3 +173,19 @@ You can find all contributors [here](https://github.com/SkriptLang/Skript/graphs
 All code is owned by its writer, licensed for others under GPLv3 (see [LICENSE](LICENSE)).
 Some contributors may choose to release their code under the MIT License.
 Further information can be found within [LICENSING.md](LICENSING.md).
+
+---
+
+# SkriptReloaded
+
+SkriptReloaded is a fork of [Skript](https://github.com/skriptlang/skript) (GPLv3). All existing `.sk` scripts and
+Skript addons keep working: the plugin id stays `Skript`, so `depend: [Skript]` and `plugins/Skript/` are unchanged.
+The jar is built as `SkriptReloaded-<version>.jar`.
+
+New syntax (see `src/main/java/ch/njol/skript/reloaded`):
+
+- `median of %numbers%`, `standard deviation of %numbers%`
+- `%number% clamped between %number% and %number%`, `lerp from %number% to %number% at %number%`
+- `title case of %strings%`, `slug of %strings%`, `word count of %string%`
+- `levenshtein distance between %string% and %string%`
+- `%strings% is blank` / `is not blank`

@@ -81,12 +81,12 @@ tasks.register('testJar', ShadowJar) {
 
 task jar(overwrite: true, type: ShadowJar) {
 	dependsOn checkAliases
-	archiveFileName = jarName ? 'Skript-' + project.version + '.jar' : jarName
+	archiveFileName = jarName ? 'SkriptReloaded-' + project.version + '.jar' : jarName
 	from sourceSets.main.output
 }
 
 task build(overwrite: true, type: ShadowJar) {
-	archiveFileName = jarName ? 'Skript-' + project.version + '.jar' : jarName
+	archiveFileName = jarName ? 'SkriptReloaded-' + project.version + '.jar' : jarName
 	from sourceSets.main.output
 }
 

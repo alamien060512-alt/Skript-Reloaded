@@ -560,6 +560,8 @@ public final class Skript extends JavaPlugin implements Listener {
 					//noinspection removal
 					getAddonInstance().loadClasses("ch.njol.skript",
 						"conditions", "effects", "events", "expressions", "entity", "literals", "sections", "structures");
+					// SkriptReloaded additions
+					getAddonInstance().loadClasses("ch.njol.skript.reloaded", "conditions", "expressions");
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

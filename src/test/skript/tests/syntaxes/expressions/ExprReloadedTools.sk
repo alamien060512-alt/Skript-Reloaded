@@ -1,0 +1,11 @@
+test "reloaded math and string tools":
+	assert median of 5, 1 and 3 is 3 with "median odd failed"
+	assert median of 1, 2, 3 and 4 is 2.5 with "median even failed"
+	assert 15 clamped between 0 and 10 is 10 with "clamp failed"
+	assert lerp from 10 to 20 at 0.25 is 12.5 with "lerp failed"
+	assert title case of "hello big world" is "Hello Big World" with "title case failed"
+	assert slug of "Héllo, World!" is "hello-world" with "slug failed"
+	assert word count of "a  b c" is 3 with "word count failed"
+	assert levenshtein distance between "kitten" and "sitting" is 3 with "levenshtein failed"
+	assert "   " is blank with "blank failed"
+	assert "x" is not blank with "not blank failed"

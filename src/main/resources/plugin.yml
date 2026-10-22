@@ -20,7 +20,7 @@
 
 name: Skript
 
-description: Customize Minecraft's mechanics with simple scripts written in plain English sentences.
+description: SkriptReloaded - a fork of Skript with extra syntax, fully compatible with existing .sk scripts and addons.
 
 authors: [Njol, Mirreski, 'SkriptLang Team', Contributors]
 

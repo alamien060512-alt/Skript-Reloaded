@@ -189,3 +189,7 @@ New syntax (see `src/main/java/ch/njol/skript/reloaded`):
 - `title case of %strings%`, `slug of %strings%`, `word count of %string%`
 - `levenshtein distance between %string% and %string%`
 - `%strings% is blank` / `is not blank`
+- `alias command "gm" to "gamemode"`, `remove command alias "gm"`, `clear all command aliases` (works for any command)
+- `show sidebar titled "&6Title" with lines "a", "b" to %players%`, `hide sidebar from %players%`
+
+Bossbars and tab list header/footer already exist in upstream Skript, so they are not duplicated.

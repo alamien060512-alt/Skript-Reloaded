@@ -179,6 +179,7 @@ Further information can be found within [LICENSING.md](LICENSING.md).
 # SkriptReloaded
 
 SkriptReloaded is a fork of [Skript](https://github.com/skriptlang/skript) (GPLv3). All existing `.sk` scripts and
+Documentation: [docs/wiki](docs/wiki/Home.md).
 Skript addons keep working: the plugin id stays `Skript`, so `depend: [Skript]` and `plugins/Skript/` are unchanged.
 The jar is built as `SkriptReloaded-<version>.jar`.
 

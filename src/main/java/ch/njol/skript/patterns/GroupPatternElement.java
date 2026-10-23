@@ -1,0 +1,49 @@
+package ch.njol.skript.patterns;
+
+import ch.njol.skript.patterns.SkriptPattern.StringificationProperties;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
+
+/**
+ * A {@link PatternElement} that represents a group, for example {@code (test)}.
+ */
+public class GroupPatternElement extends PatternElement {
+
+	private final PatternElement patternElement;
+
+	public GroupPatternElement(PatternElement patternElement) {
+		this.patternElement = patternElement;
+	}
+
+	public PatternElement getPatternElement() {
+		return patternElement;
+	}
+
+	@Override
+	void setNext(@Nullable PatternElement next) {
+		super.setNext(next);
+		patternElement.setLastNext(next);
+	}
+
+	@Override
+	public @Nullable MatchResult match(String expr, MatchResult matchResult) {
+		return patternElement.match(expr, matchResult);
+	}
+
+	@Override
+	public String toString() {
+		return toString(StringificationProperties.DEFAULT);
+	}
+
+	@Override
+	public String toString(StringificationProperties properties) {
+		return "(" + patternElement.toFullString(properties) + ")";
+	}
+
+	@Override
+	public Set<String> getCombinations(boolean clean) {
+		return patternElement.getAllCombinations(clean);
+	}
+
+}

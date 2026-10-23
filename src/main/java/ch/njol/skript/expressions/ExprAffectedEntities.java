@@ -1,0 +1,117 @@
+package ch.njol.skript.expressions;
+
+import java.util.Iterator;
+import java.util.Objects;
+
+import ch.njol.skript.classes.Changer.ChangeMode;
+import ch.njol.skript.lang.EventRestrictedSyntax;
+import ch.njol.util.coll.CollectionUtils;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
+import org.jetbrains.annotations.Nullable;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Example;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.util.Kleenean;
+
+@Name("Affected Entities")
+@Description("The affected entities in the <a href='#aoe_cloud_effect'>area cloud effect</a> event.")
+@Example("""
+	on area cloud effect:
+		loop affected entities:
+			if loop-value is a player:
+				send "WARNING: you've step on an area effect cloud!" to loop-value
+	""")
+@Since("2.4")
+public class ExprAffectedEntities extends SimpleExpression<LivingEntity> implements EventRestrictedSyntax {
+
+	static {
+		Skript.registerExpression(ExprAffectedEntities.class, LivingEntity.class, ExpressionType.SIMPLE, "[the] affected entities");
+	}
+
+	@Override
+	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parser) {
+		return true;
+	}
+
+	@Override
+	public Class<? extends Event>[] supportedEvents() {
+		return CollectionUtils.array(AreaEffectCloudApplyEvent.class);
+	}
+
+	@Override
+	protected LivingEntity @Nullable [] get(Event event) {
+		if (event instanceof AreaEffectCloudApplyEvent areaEvent)
+			return areaEvent.getAffectedEntities().toArray(new LivingEntity[0]);
+		return null;
+	}
+
+	@Override
+	public @Nullable Iterator<? extends LivingEntity> iterator(Event event) {
+		if (event instanceof AreaEffectCloudApplyEvent areaEvent)
+			return areaEvent.getAffectedEntities().iterator();
+		return super.iterator(event);
+	}
+
+	@Override
+	public Class<?> @Nullable [] acceptChange(ChangeMode mode) {
+		return switch (mode) {
+			case ADD, SET, DELETE, REMOVE -> CollectionUtils.array(LivingEntity[].class);
+			default -> null;
+		};
+	}
+
+	@Override
+	public void change(Event event, Object @Nullable [] delta, ChangeMode mode) {
+		if (!(event instanceof AreaEffectCloudApplyEvent areaEvent))
+			return;
+
+		switch (mode) {
+			case REMOVE:
+				for (Object entity : delta) {
+					areaEvent.getAffectedEntities().remove((LivingEntity) entity);
+				}
+				break;
+			case SET:
+				areaEvent.getAffectedEntities().clear();
+				// FALLTHROUGH
+			case ADD:
+				for (Object entity : delta) {
+					areaEvent.getAffectedEntities().add((LivingEntity) entity);
+				}
+				break;
+			case RESET, DELETE:
+				areaEvent.getAffectedEntities().clear();
+				break;
+		}
+	}
+
+	@Override
+	public boolean isSingle() {
+		return false;
+	}
+
+	@Override
+	public boolean isDefault() {
+		return true;
+	}
+
+	@Override
+	public Class<? extends LivingEntity> getReturnType() {
+		return LivingEntity.class;
+	}
+
+	@Override
+	public String toString(@Nullable Event event, boolean debug) {
+		return "the affected entities";
+	}
+
+}

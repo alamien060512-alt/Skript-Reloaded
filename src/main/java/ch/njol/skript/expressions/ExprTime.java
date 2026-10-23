@@ -1,0 +1,118 @@
+package ch.njol.skript.expressions;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer.ChangeMode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Example;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.base.PropertyExpression;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.util.Time;
+import ch.njol.skript.util.Timeperiod;
+import ch.njol.skript.util.Timespan;
+import ch.njol.skript.util.Timespan.TimePeriod;
+import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
+import org.bukkit.World;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
+
+@Name("Time")
+@Description({
+	"The <a href='#time'>time</a> of a world.",
+	"Use the \"minecraft <a href='#timespan'>timespan</a>\" syntax to change the time according " +
+	"to Minecraft's time intervals.",
+	"Since Minecraft uses discrete intervals for time (ticks), " +
+	"changing the time by real-world minutes or real-world seconds only changes it approximately.",
+	"Removing an amount of time from a world's time will move the clock forward a day."
+})
+@Example("set time of world \"world\" to 2:00")
+@Example("add 2 minecraft hours to time of world \"world\"")
+@Example("add 54 real seconds to time of world \"world\" # approximately 1 minecraft hour")
+@Since("1.0")
+public class ExprTime extends PropertyExpression<World, Time> {
+
+	// 18000 is the offset to allow for using "add 2:00" without going to a new day
+	// and causing unexpected behavior
+	private static final int TIME_TO_TIMESPAN_OFFSET = 18000;
+
+	static {
+		Skript.registerExpression(ExprTime.class, Time.class, ExpressionType.PROPERTY,
+			"[the] time[s] [([with]in|of) %worlds%]",
+			"%worlds%'[s] time[s]"
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parser) {
+		setExpr((Expression<World>) expressions[0]);
+		return true;
+	}
+
+	@Override
+	protected Time[] get(Event event, World[] worlds) {
+		return get(worlds, world -> new Time((int) world.getTime()));
+	}
+
+	@Override
+	public Class<?> @Nullable [] acceptChange(ChangeMode mode) {
+		return switch (mode) {
+			case ADD, REMOVE ->
+				// allow time to avoid conversion to timespan, which causes all sorts of headaches
+				CollectionUtils.array(Time.class, Timespan.class);
+			case SET -> CollectionUtils.array(Time.class, Timeperiod.class);
+			default -> null;
+		};
+	}
+
+	@Override
+	public void change(Event event, Object @Nullable [] delta, ChangeMode mode) {
+		if (delta == null)
+			return;
+
+		Object t = delta[0];
+		if (t == null)
+			return;
+
+		World[] worlds = getExpr().getArray(event);
+
+		long ticks = switch (t) {
+			case Time time -> {
+				if (mode != ChangeMode.SET) {
+					yield time.getTicks() - TIME_TO_TIMESPAN_OFFSET;
+				} else {
+					yield time.getTicks();
+				}
+			}
+			case Timespan timespan -> timespan.getAs(TimePeriod.TICK);
+			case Timeperiod timeperiod -> timeperiod.start;
+			default -> 0;
+		};
+
+		for (World world : worlds) {
+			if (world.getFullTime() == 0)
+				continue; // the world doesn't have a world clock, can't modify time
+
+			switch (mode) {
+				case ADD -> world.setTime(world.getTime() + ticks);
+				case REMOVE -> world.setTime(world.getTime() - ticks);
+				case SET -> world.setTime(ticks);
+			}
+		}
+	}
+
+	@Override
+	public Class<Time> getReturnType() {
+		return Time.class;
+	}
+
+	@Override
+	public String toString(@Nullable Event event, boolean debug) {
+		return "the time in " + getExpr().toString(event, debug);
+	}
+
+}

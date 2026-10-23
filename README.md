@@ -195,3 +195,6 @@ New syntax (see `src/main/java/ch/njol/skript/reloaded`):
 Bossbars and tab list header/footer already exist in upstream Skript, so they are not duplicated.
 - `distinct %objects%`, `%objects% rotated by %number%`, `occurrences of %object% in %objects%`
 - `%string% left|right padded to %number% [with %string%]`, `%number% rounded to %number% decimal places`
+- `send http get|post|put|patch|delete request to %string% [with body %string%] [with headers %strings%] and store the response in %var% [and the status in %var%]` (non-blocking)
+- `placeholder %string% [for %offlineplayer%]`, `placeholders in %strings% [for %offlineplayer%]` (PlaceholderAPI, optional)
+- `url encoded|decoded %strings%`, `base64 encoded|decoded %strings%`

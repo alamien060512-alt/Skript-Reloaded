@@ -193,3 +193,5 @@ New syntax (see `src/main/java/ch/njol/skript/reloaded`):
 - `show sidebar titled "&6Title" with lines "a", "b" to %players%`, `hide sidebar from %players%`
 
 Bossbars and tab list header/footer already exist in upstream Skript, so they are not duplicated.
+- `distinct %objects%`, `%objects% rotated by %number%`, `occurrences of %object% in %objects%`
+- `%string% left|right padded to %number% [with %string%]`, `%number% rounded to %number% decimal places`
